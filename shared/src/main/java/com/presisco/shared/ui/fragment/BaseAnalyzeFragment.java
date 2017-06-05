@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.presisco.shared.R;
@@ -31,6 +32,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
     private ActionListener mChildListener;
     private Spinner mModeSpinner;
     private Spinner mEventSpinner;
+    private Button mGetAdviceBtn;
     private EventAdapter mEventAdapter;
     private MonitorHostFragment mMonitorHost;
     private MonitorPanelFragment mCurrentPanel = null;
@@ -67,6 +69,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
             int mode_spinner_id,
             int event_spinner_id,
             int monitor_host_id,
+            int get_advice_btn_id,
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -88,7 +91,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
                 mCurrentMode = mAnalyzeModes[pos];
 
                 mMonitorHost.displayPanel(mCurrentMode.getPanelType());
-                mEvents = mChildListener.loadEvents(pos);
+                mEvents = mChildListener.loadEvents(mCurrentMode.getEventType());
 
                 refreshEventTitles();
             }
@@ -120,6 +123,15 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
         mAnalyseProgress.setIndeterminate(true);
         mAnalyseProgress.setTitle("正在进行分析");
 
+        mGetAdviceBtn = (Button) rootView.findViewById(get_advice_btn_id);
+        mGetAdviceBtn.setEnabled(false);
+        mGetAdviceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChildListener.onGetAdvice(mCurrentMode.getEventType(), mCurrentMode.getClassificationString());
+            }
+        });
+
         return rootView;
     }
 
@@ -141,9 +153,11 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
      * 子类监听器，使基类能调用子类代码
      */
     public interface ActionListener {
-        BaseEvent[] loadEvents(int position);
+        BaseEvent[] loadEvents(String event_type);
 
         BaseEventData[] loadEventData(long event_id);
+
+        void onGetAdvice(String event_type, String classification);
     }
 
     private class EventAdapter extends ArrayAdapter<String> {
@@ -157,10 +171,12 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
         protected void onPostExecute(Void aVoid) {
             mAnalyseProgress.hide();
             mCurrentMode.displayResult();
+            mGetAdviceBtn.setEnabled(true);
         }
 
         @Override
         protected void onPreExecute() {
+            mGetAdviceBtn.setEnabled(false);
             mAnalyseProgress.show();
             mMonitorHost.displayPanel(mCurrentMode.getPanelType());
         }

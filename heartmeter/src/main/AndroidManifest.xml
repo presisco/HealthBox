@@ -53,6 +53,9 @@
             android:theme="@style/AppTheme.Dialog" />
         <activity android:name=".UI.Activity.MonitorPreferenceActivity" />
         <activity android:name=".debug.MonitorDebugActivity" />
+        <activity
+            android:name=".UI.Activity.AdviceActivity"
+            android:theme="@style/AppTheme.Dialog" />
     </application>
 
 </manifest>

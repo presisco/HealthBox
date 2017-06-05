@@ -10,5 +10,5 @@ public class Constant {
     public static final String PATH_SIGN_UP = "sign_up.php";
     public static final String PATH_UPLOAD_EVENTS = "upload_events.php";
     public static final String PATH_SIGN_IN = "sign_in.php";
-
+    public static final String PATH_GET_ADVICE = "get_advice.php";
 }

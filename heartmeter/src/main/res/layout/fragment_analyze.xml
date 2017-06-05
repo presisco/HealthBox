@@ -54,9 +54,18 @@
         android:id="@+id/analyzeHost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/buttonAdvice"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/eventLayout">
 
     </FrameLayout>
+
+    <Button
+        android:id="@+id/buttonAdvice"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/label_get_advice" />
 </RelativeLayout>

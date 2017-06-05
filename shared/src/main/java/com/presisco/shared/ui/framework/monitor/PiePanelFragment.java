@@ -107,6 +107,7 @@ public class PiePanelFragment extends ChartPanelFragment {
     @Override
     public void clear() {
         mSlices.clear();
+        mHint.setText("");
         redraw();
     }
 

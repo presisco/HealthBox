@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:textSize="@dimen/value_panel_hint_fontsize" />
+        android:textSize="14sp" />
 
     <view
         android:id="@+id/pieChart"

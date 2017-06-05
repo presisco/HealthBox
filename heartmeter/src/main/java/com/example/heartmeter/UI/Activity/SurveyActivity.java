@@ -155,8 +155,10 @@ public class SurveyActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(SurveyActivity.this, response, Toast.LENGTH_SHORT).show();
-                SurveyActivity.this.setResult(RESULT_PASSED, new Intent().putExtra("username", survey.get("username")));
-                SurveyActivity.this.setResult(RESULT_PASSED, new Intent().putExtra("age", survey.get("age")));
+                SurveyActivity.this.setResult(
+                        RESULT_PASSED, new Intent()
+                                .putExtra("username", survey.get("username"))
+                                .putExtra("age", survey.get("age")));
                 SurveyActivity.this.finish();
             }
         }, new Response.ErrorListener() {

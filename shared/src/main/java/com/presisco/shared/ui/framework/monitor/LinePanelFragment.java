@@ -103,10 +103,8 @@ public class LinePanelFragment extends ChartPanelFragment {
                 mPoints.remove(0);
             }
         }
-        if (!mScrollable) {
-            scrollViewport();
-        }
         initChart();
+        scrollViewport();
     }
 
     public void appendPoint(PointValue point) {
@@ -115,10 +113,8 @@ public class LinePanelFragment extends ChartPanelFragment {
             mPoints.remove(0);
         }
         mLastXCoord += mXStep;
-        if (!mScrollable) {
-            scrollViewport();
-        }
         initChart();
+        scrollViewport();
     }
 
     public void appendValue(float value) {
@@ -127,10 +123,8 @@ public class LinePanelFragment extends ChartPanelFragment {
             mPoints.remove(0);
         }
         mLastXCoord += mXStep;
-        if (!mScrollable) {
-            scrollViewport();
-        }
         initChart();
+        scrollViewport();
     }
 
     public void appendValue(float[] values) {
@@ -141,10 +135,8 @@ public class LinePanelFragment extends ChartPanelFragment {
                 mPoints.remove(0);
             }
         }
-        if (!mScrollable) {
-            scrollViewport();
-        }
         initChart();
+        scrollViewport();
     }
 
     @Override

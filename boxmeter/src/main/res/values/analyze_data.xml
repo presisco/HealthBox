@@ -1,121 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="advice_sport" formatted="false">您的运动时间为%duration%分钟，\n
-        平均心率是%average%，\n
+    <string name="advice_sport" formatted="false">
+        您的运动时间为%duration%分钟，\n
+        平均血氧饱和度是%average%，\n
         建议：\n
     </string>
 
-    <string name="advice_default" formatted="false">您的测试时间为%duration%分钟，\n
-        平均心率是%average%，\n
+    <string name="advice_default" formatted="false">
+        您的测试时间为%duration%分钟，\n
+        平均血氧饱和度是%average%，\n
         建议：\n
     </string>
 
     <string-array name="default_partition">
-        <item>40</item>
-        <item>60</item>
-        <item>130</item>
+        <item>85</item>
+        <item>94</item>
     </string-array>
 
     <string-array name="default_classification">
-        <item>超低</item>
-        <item>过低</item>
+        <item>严重缺氧</item>
+        <item>缺氧</item>
         <item>正常</item>
-        <item>过高</item>
     </string-array>
 
     <string-array name="default_colors">
-        <item>#1565C0</item>
-        <item>#00B0FF</item>
-        <item>#2E7D32</item>
         <item>#D84315</item>
+        <item>#F9A825</item>
+        <item>#2E7D32</item>
     </string-array>
 
     <string-array name="default_advice_bodies">
         <item></item>
         <item></item>
         <item></item>
-        <item></item>
     </string-array>
 
     <string-array name="aerobic_partition">
-        <item>0.35</item>
-        <item>0.59</item>
-        <item>0.79</item>
-        <item>0.89</item>
+        <item>82</item>
+        <item>88</item>
+        <item>94</item>
     </string-array>
 
     <string-array name="aerobic_classification">
-        <item>较低强度</item>
-        <item>低强度</item>
-        <item>中等强度</item>
-        <item>大强度</item>
         <item>超大强度</item>
+        <item>大强度</item>
+        <item>中等强度</item>
     </string-array>
 
     <string-array name="aerobic_colors">
-        <item>#1565C0</item>
-        <item>#00B0FF</item>
-        <item>#2E7D32</item>
-        <item>#F9A825</item>
         <item>#D84315</item>
+        <item>#F9A825</item>
+        <item>#2E7D32</item>
     </string-array>
 
     <string-array name="aerobic_advice_bodies">
         <item></item>
         <item></item>
         <item></item>
-        <item></item>
-        <item></item>
     </string-array>
 
     <string-array name="anaerobic_partition">
-        <item>0.35</item>
-        <item>0.59</item>
-        <item>0.79</item>
-        <item>0.89</item>
+        <item>79</item>
+        <item>85</item>
+        <item>91</item>
     </string-array>
 
     <string-array name="anaerobic_classification">
-        <item>较低强度</item>
-        <item>低强度</item>
-        <item>中等强度</item>
-        <item>大强度</item>
         <item>超大强度</item>
+        <item>大强度</item>
+        <item>中等强度</item>
     </string-array>
 
     <string-array name="anaerobic_colors">
-        <item>#1565C0</item>
-        <item>#00B0FF</item>
-        <item>#2E7D32</item>
-        <item>#F9A825</item>
         <item>#D84315</item>
+        <item>#F9A825</item>
+        <item>#2E7D32</item>
     </string-array>
 
     <string-array name="anaerobic_advice_bodies">
         <item></item>
         <item></item>
         <item></item>
-        <item></item>
-        <item></item>
     </string-array>
 
     <string-array name="sleep_partition">
-        <item>65</item>
+        <item>85</item>
+        <item>90</item>
+        <item>95</item>
     </string-array>
 
     <string-array name="sleep_classification">
+        <item>过低</item>
+        <item>偏低</item>
         <item>正常</item>
-        <item>心脏负荷过高</item>
     </string-array>
 
     <string-array name="sleep_colors">
-        <item>#2E7D32</item>
+        <item>#D84315</item>
         <item>#F9A825</item>
+        <item>#2E7D32</item>
     </string-array>
 
     <string-array name="sleep_advice_bodies">
         <item></item>
         <item></item>
+        <item></item>
     </string-array>
-
 </resources>

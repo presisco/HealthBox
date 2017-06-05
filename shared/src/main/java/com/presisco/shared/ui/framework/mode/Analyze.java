@@ -1,6 +1,9 @@
 package com.presisco.shared.ui.framework.mode;
 
+import android.content.res.Resources;
+
 import com.presisco.shared.ui.framework.monitor.MonitorPanelFragment;
+import com.presisco.shared.utils.ValueUtils;
 
 /**
  * Created by presisco on 2017/6/2.
@@ -12,7 +15,50 @@ import com.presisco.shared.ui.framework.monitor.MonitorPanelFragment;
  * @param <EVENT_DATA> 测量数据类型
  */
 public abstract class Analyze<EVENT_DATA> {
+    protected final double[] PARTITION;
+    protected final int[] COLORS;
+    protected final String[] CLASSIFICATION;
+    protected final String ADVICE_HEADER;
+    protected final String[] ADVICE_BODY;
     MonitorPanelFragment mPanel;
+    private int classification_index = 0;
+
+    protected Analyze(
+            Resources res,
+            int partition_id,
+            int colors_id,
+            int classification_id,
+            int advice_header_id,
+            int advice_body_id) {
+        PARTITION = ValueUtils.convertStringArray2DoubleArray(res.getStringArray(partition_id));
+        COLORS = ValueUtils.convertStringArray2ColorArray(res.getStringArray(colors_id));
+        CLASSIFICATION = res.getStringArray(classification_id);
+        ADVICE_HEADER = res.getString(advice_header_id);
+        ADVICE_BODY = res.getStringArray(advice_body_id);
+    }
+
+    protected int getClassificationIndex() {
+        return classification_index;
+    }
+
+    protected void setClassificationIndex(int index) {
+        classification_index = index;
+    }
+
+    protected String getAdviceBody() {
+        return ADVICE_BODY[classification_index];
+    }
+
+    public String getClassificationString() {
+        return CLASSIFICATION[getClassificationIndex()];
+    }
+
+    /**
+     * 获取当前的事件类型
+     *
+     * @return 事件类型字符串
+     */
+    public abstract String getEventType();
 
     /**
      * 获取当前显示的面板

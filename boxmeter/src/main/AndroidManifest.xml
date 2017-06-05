@@ -53,6 +53,9 @@
         <activity
             android:name=".UI.Activity.SignInActivity"
             android:theme="@style/AppTheme.Dialog" />
+        <activity
+            android:name=".UI.Activity.AdviceActivity"
+            android:theme="@style/AppTheme.Dialog" />
     </application>
 
 </manifest>

@@ -1,6 +1,8 @@
 package com.presisco.boxmeter.UI.Fragment;
 
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,29 +18,34 @@ import com.presisco.shared.ui.fragment.BaseAnalyzeFragment;
 import com.presisco.shared.ui.framework.mode.Analyze;
 import com.presisco.shared.ui.framework.monitor.MonitorHostFragment;
 import com.presisco.shared.ui.framework.monitor.PiePanelFragment;
+import com.presisco.shared.utils.Classifier;
+
+import java.util.ArrayList;
 
 import lecho.lib.hellocharts.model.SliceValue;
-import lecho.lib.hellocharts.util.ChartUtils;
 
 /**
  * Created by presisco on 2017/6/2.
  */
 
 public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeFragment.ActionListener {
-    private static final String[] EVENT_TYPES = {Event.TYPE_DEFAULT, Event.TYPE_AEROBIC, Event.TYPE_ANAEROBIC, Event.TYPE_SLEEP};
     private SQLiteManager mDataManager;
 
     private AnalyzeMode[] mAnalyseModes = null;
+    private Resources res = null;
+    private int user_age;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        res = getContext().getResources();
         if (mDataManager == null) {
             mDataManager = new SQLiteManager(getContext());
         }
         initModes();
         setChildListener(this);
         setHistoryModes(mAnalyseModes);
+        user_age = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt("age", 30);
     }
 
     @Override
@@ -48,17 +55,32 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
                 R.id.spinnerMode,
                 R.id.spinnerEvent,
                 R.id.monitorHost,
+                R.id.buttonAdvice,
                 inflater, container, savedInstanceState);
     }
 
     private void initModes() {
         mAnalyseModes = new AnalyzeMode[]{
-                new AnalyzeMode() {
-                    private SliceValue[] result = new SliceValue[]{
-                            new SliceValue(),
-                            new SliceValue(),
-                            new SliceValue()
-                    };
+                new AnalyzeMode(
+                        res,
+                        R.array.default_partition,
+                        R.array.default_colors,
+                        R.array.default_classification,
+                        R.string.advice_default,
+                        R.array.default_advice_bodies) {
+                    private SliceValue[] distribution = new SliceValue[0];
+                    private int duration;
+                    private int average_stat;
+
+                    /**
+                     * 获取当前的事件类型
+                     *
+                     * @return 事件类型字符串
+                     */
+                    @Override
+                    public String getEventType() {
+                        return Event.TYPE_DEFAULT;
+                    }
 
                     @Override
                     public String getPanelType() {
@@ -67,48 +89,73 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
 
                     @Override
                     public void initPanelView() {
-                    }
-
-                    @Override
-                    public void analyseData(EventData[] data, int analyse_rate) {
-                        int[] counter = new int[]{0, 0, 0};
-                        for (int i = 0; i < data.length; ++i) {
-                            if (data[i].spo2h > 95) {
-                                counter[2]++;
-                            } else if (data[i].spo2h > 85) {
-                                counter[1]++;
-                            } else {
-                                counter[0]++;
-                            }
-                        }
-                        result[0].setValue(counter[0]);
-                        result[0].setLabel("Low");
-                        result[0].setColor(ChartUtils.COLOR_RED);
-                        result[1].setValue(counter[1]);
-                        result[1].setLabel("Normal");
-                        result[1].setColor(ChartUtils.COLOR_GREEN);
-                        result[2].setValue(counter[2]);
-                        result[2].setLabel("High");
-                        result[2].setColor(ChartUtils.COLOR_VIOLET);
-                    }
-
-                    @Override
-                    public void displayResult() {
                         PiePanelFragment panel = (PiePanelFragment) getPanel();
                         panel.clear();
                         PiePanelFragment.PieStyle style = new PiePanelFragment.PieStyle();
                         style.has_label = true;
                         style.has_label_outside = false;
                         panel.setStyle(style);
-                        panel.appendSlices(result);
+                    }
+
+                    @Override
+                    public void analyseData(EventData[] data, int analyse_rate) {
+                        int[] dist_value = new int[CLASSIFICATION.length];
+
+                        int average = 0;
+                        int compensation = user_age/(-10);
+                        for (int i = 0; i < data.length; ++i) {
+                            int class_index = Classifier.classify(data[i].spo2h + compensation, PARTITION);
+                            dist_value[class_index]++;
+                            average += data[i].spo2h;
+                        }
+                        average /= data.length;
+                        average_stat = average;
+                        duration = data.length / 60;
+
+                        setClassificationIndex(Classifier.classify(average + compensation, PARTITION));
+
+                        ArrayList<SliceValue> temp = new ArrayList<>();
+                        for (int i = 0; i < dist_value.length; ++i) {
+                            if (dist_value[i] > 0) {
+                                temp.add(
+                                        new SliceValue(dist_value[i])
+                                                .setLabel(CLASSIFICATION[i])
+                                                .setColor(COLORS[i]));
+                            }
+                        }
+                        distribution = temp.toArray(new SliceValue[temp.size()]);
+                    }
+
+                    @Override
+                    public void displayResult() {
+                        PiePanelFragment panel = (PiePanelFragment) getPanel();
+                        String hint = ADVICE_HEADER.replace("%duration%", Integer.toString(duration));
+                        hint = hint.replace("%average%", Integer.toString(average_stat));
+                        hint = hint.replace("\\n", "\n");
+                        panel.setHint(hint + getAdviceBody());
+                        panel.appendSlices(distribution);
                     }
                 },
-                new AnalyzeMode() {
-                    private SliceValue[] result = new SliceValue[]{
-                            new SliceValue(),
-                            new SliceValue(),
-                            new SliceValue()
-                    };
+                new AnalyzeMode(
+                        res,
+                        R.array.aerobic_partition,
+                        R.array.aerobic_colors,
+                        R.array.aerobic_classification,
+                        R.string.advice_default,
+                        R.array.aerobic_advice_bodies) {
+                    private int average_stat = 0;
+                    private int duration = 0;
+                    private SliceValue[] distribution = new SliceValue[0];
+
+                    /**
+                     * 获取当前的事件类型
+                     *
+                     * @return 事件类型字符串
+                     */
+                    @Override
+                    public String getEventType() {
+                        return Event.TYPE_AEROBIC;
+                    }
 
                     @Override
                     public String getPanelType() {
@@ -117,48 +164,74 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
 
                     @Override
                     public void initPanelView() {
-                    }
-
-                    @Override
-                    public void analyseData(EventData[] data, int analyse_rate) {
-                        int[] counter = new int[]{0, 0, 0};
-                        for (int i = 0; i < data.length; ++i) {
-                            if (data[i].spo2h > 95) {
-                                counter[2]++;
-                            } else if (data[i].spo2h > 85) {
-                                counter[1]++;
-                            } else {
-                                counter[0]++;
-                            }
-                        }
-                        result[0].setValue(counter[0]);
-                        result[0].setLabel("Low");
-                        result[0].setColor(ChartUtils.COLOR_RED);
-                        result[1].setValue(counter[1]);
-                        result[1].setLabel("Normal");
-                        result[1].setColor(ChartUtils.COLOR_GREEN);
-                        result[2].setValue(counter[2]);
-                        result[2].setLabel("High");
-                        result[2].setColor(ChartUtils.COLOR_VIOLET);
-                    }
-
-                    @Override
-                    public void displayResult() {
                         PiePanelFragment panel = (PiePanelFragment) getPanel();
                         panel.clear();
                         PiePanelFragment.PieStyle style = new PiePanelFragment.PieStyle();
                         style.has_label = true;
                         style.has_label_outside = false;
                         panel.setStyle(style);
-                        panel.appendSlices(result);
+                    }
+
+                    @Override
+                    public void analyseData(EventData[] data, int analyse_rate) {
+                        int[] dist_value = new int[CLASSIFICATION.length];
+
+                        int average = 0;
+                        int compensation = user_age / (-10);
+
+                        for (int i = 0; i < data.length; ++i) {
+                            int class_index = Classifier.classify((double) data[i].spo2h + compensation, PARTITION);
+                            dist_value[class_index]++;
+                            average += data[i].spo2h;
+                        }
+                        average /= data.length;
+                        average_stat = average;
+                        duration = data.length / 60;
+
+                        setClassificationIndex(Classifier.classify(average + compensation, PARTITION));
+
+                        ArrayList<SliceValue> temp = new ArrayList<>();
+                        for (int i = 0; i < dist_value.length; ++i) {
+                            if (dist_value[i] > 0) {
+                                temp.add(
+                                        new SliceValue(dist_value[i])
+                                                .setLabel(CLASSIFICATION[i])
+                                                .setColor(COLORS[i]));
+                            }
+                        }
+                        distribution = temp.toArray(new SliceValue[temp.size()]);
+                    }
+
+                    @Override
+                    public void displayResult() {
+                        PiePanelFragment panel = (PiePanelFragment) getPanel();
+                        String hint = ADVICE_HEADER.replace("%duration%", Integer.toString(duration));
+                        hint = hint.replace("%average%", Integer.toString(average_stat));
+                        hint = hint.replace("\\n", "\n");
+                        panel.setHint(hint + getAdviceBody());
+                        panel.appendSlices(distribution);
                     }
                 },
-                new AnalyzeMode() {
-                    private SliceValue[] result = new SliceValue[]{
-                            new SliceValue(),
-                            new SliceValue(),
-                            new SliceValue()
-                    };
+                new AnalyzeMode(
+                        res,
+                        R.array.anaerobic_partition,
+                        R.array.anaerobic_colors,
+                        R.array.anaerobic_classification,
+                        R.string.advice_default,
+                        R.array.anaerobic_advice_bodies) {
+                    private SliceValue[] distribution = new SliceValue[0];
+                    private int average_stat = 0;
+                    private int duration = 0;
+
+                    /**
+                     * 获取当前的事件类型
+                     *
+                     * @return 事件类型字符串
+                     */
+                    @Override
+                    public String getEventType() {
+                        return Event.TYPE_ANAEROBIC;
+                    }
 
                     @Override
                     public String getPanelType() {
@@ -167,49 +240,74 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
 
                     @Override
                     public void initPanelView() {
-                    }
-
-                    @Override
-                    public void analyseData(EventData[] data, int analyse_rate) {
-
-                        int[] counter = new int[]{0, 0, 0};
-                        for (int i = 0; i < data.length; ++i) {
-                            if (data[i].spo2h > 95) {
-                                counter[2]++;
-                            } else if (data[i].spo2h > 85) {
-                                counter[1]++;
-                            } else {
-                                counter[0]++;
-                            }
-                        }
-                        result[0].setValue(counter[0]);
-                        result[0].setLabel("Low");
-                        result[0].setColor(ChartUtils.COLOR_RED);
-                        result[1].setValue(counter[1]);
-                        result[1].setLabel("Normal");
-                        result[1].setColor(ChartUtils.COLOR_GREEN);
-                        result[2].setValue(counter[2]);
-                        result[2].setLabel("High");
-                        result[2].setColor(ChartUtils.COLOR_VIOLET);
-                    }
-
-                    @Override
-                    public void displayResult() {
                         PiePanelFragment panel = (PiePanelFragment) getPanel();
                         panel.clear();
                         PiePanelFragment.PieStyle style = new PiePanelFragment.PieStyle();
                         style.has_label = true;
                         style.has_label_outside = false;
                         panel.setStyle(style);
-                        panel.appendSlices(result);
+                    }
+
+                    @Override
+                    public void analyseData(EventData[] data, int analyse_rate) {
+                        int[] dist_value = new int[CLASSIFICATION.length];
+
+                        int average = 0;
+                        int compensation = user_age / (-10);
+
+                        for (int i = 0; i < data.length; ++i) {
+                            int class_index = Classifier.classify(data[i].spo2h + compensation, PARTITION);
+                            dist_value[class_index]++;
+                            average += data[i].spo2h;
+                        }
+                        average /= data.length;
+                        average_stat = average;
+                        duration = data.length / 60;
+
+                        setClassificationIndex(Classifier.classify(average + compensation, PARTITION));
+
+                        ArrayList<SliceValue> temp = new ArrayList<>();
+                        for (int i = 0; i < dist_value.length; ++i) {
+                            if (dist_value[i] > 0) {
+                                temp.add(
+                                        new SliceValue(dist_value[i])
+                                                .setLabel(CLASSIFICATION[i])
+                                                .setColor(COLORS[i]));
+                            }
+                        }
+                        distribution = temp.toArray(new SliceValue[temp.size()]);
+                    }
+
+                    @Override
+                    public void displayResult() {
+                        PiePanelFragment panel = (PiePanelFragment) getPanel();
+                        String hint = ADVICE_HEADER.replace("%duration%", Integer.toString(duration));
+                        hint = hint.replace("%average%", Integer.toString(average_stat));
+                        hint = hint.replace("\\n", "\n");
+                        panel.setHint(hint + getAdviceBody());
+                        panel.appendSlices(distribution);
                     }
                 },
-                new AnalyzeMode() {
-                    private SliceValue[] result = new SliceValue[]{
-                            new SliceValue(),
-                            new SliceValue(),
-                            new SliceValue()
-                    };
+                new AnalyzeMode(
+                        res,
+                        R.array.sleep_partition,
+                        R.array.sleep_colors,
+                        R.array.sleep_classification,
+                        R.string.advice_default,
+                        R.array.sleep_advice_bodies) {
+                    private SliceValue[] distribution = new SliceValue[0];
+                    private int average_stat = 0;
+                    private int duration = 0;
+
+                    /**
+                     * 获取当前的事件类型
+                     *
+                     * @return 事件类型字符串
+                     */
+                    @Override
+                    public String getEventType() {
+                        return Event.TYPE_SLEEP;
+                    }
 
                     @Override
                     public String getPanelType() {
@@ -218,49 +316,60 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
 
                     @Override
                     public void initPanelView() {
-                    }
-
-                    @Override
-                    public void analyseData(EventData[] data, int analyse_rate) {
-
-                        int[] counter = new int[]{0, 0, 0};
-                        for (int i = 0; i < data.length; ++i) {
-                            if (data[i].spo2h > 95) {
-                                counter[2]++;
-                            } else if (data[i].spo2h > 85) {
-                                counter[1]++;
-                            } else {
-                                counter[0]++;
-                            }
-                        }
-                        result[0].setValue(counter[0]);
-                        result[0].setLabel("Low");
-                        result[0].setColor(ChartUtils.COLOR_RED);
-                        result[1].setValue(counter[1]);
-                        result[1].setLabel("Normal");
-                        result[1].setColor(ChartUtils.COLOR_GREEN);
-                        result[2].setValue(counter[2]);
-                        result[2].setLabel("High");
-                        result[2].setColor(ChartUtils.COLOR_VIOLET);
-                    }
-
-                    @Override
-                    public void displayResult() {
                         PiePanelFragment panel = (PiePanelFragment) getPanel();
                         panel.clear();
                         PiePanelFragment.PieStyle style = new PiePanelFragment.PieStyle();
                         style.has_label = true;
                         style.has_label_outside = false;
                         panel.setStyle(style);
-                        panel.appendSlices(result);
                     }
-                },
+
+                    @Override
+                    public void analyseData(EventData[] data, int analyse_rate) {
+                        int[] dist_value = new int[CLASSIFICATION.length];
+
+                        int average = 0;
+                        int compensation = user_age / (-10);
+
+                        for (int i = 0; i < data.length; ++i) {
+                            int class_index = Classifier.classify(data[i].spo2h + compensation, PARTITION);
+                            dist_value[class_index]++;
+                            average += data[i].spo2h;
+                        }
+                        average /= data.length;
+                        average_stat = average;
+                        duration = data.length / 60;
+
+                        setClassificationIndex(Classifier.classify(average + compensation, PARTITION));
+
+                        ArrayList<SliceValue> temp = new ArrayList<>();
+                        for (int i = 0; i < dist_value.length; ++i) {
+                            if (dist_value[i] > 0) {
+                                temp.add(
+                                        new SliceValue(dist_value[i])
+                                                .setLabel(CLASSIFICATION[i])
+                                                .setColor(COLORS[i]));
+                            }
+                        }
+                        distribution = temp.toArray(new SliceValue[temp.size()]);
+                    }
+
+                    @Override
+                    public void displayResult() {
+                        PiePanelFragment panel = (PiePanelFragment) getPanel();
+                        String hint = ADVICE_HEADER.replace("%duration%", Integer.toString(duration));
+                        hint = hint.replace("%average%", Integer.toString(average_stat));
+                        hint = hint.replace("\\n", "\n");
+                        panel.setHint(hint + getAdviceBody());
+                        panel.appendSlices(distribution);
+                    }
+                }
         };
     }
 
     @Override
-    public BaseEvent[] loadEvents(int position) {
-        return mDataManager.getEventsByType(EVENT_TYPES[position]);
+    public BaseEvent[] loadEvents(String event_type) {
+        return mDataManager.getEventsByType(event_type);
     }
 
     @Override
@@ -268,6 +377,14 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
         return mDataManager.getAllDataInEvent(event_id);
     }
 
+    @Override
+    public void onGetAdvice(String event_type, String classification) {
+
+    }
+
     public abstract static class AnalyzeMode extends Analyze<EventData> {
+        protected AnalyzeMode(Resources res, int partition_id, int colors_id, int classification_id, int advice_header_id, int advice_body_id) {
+            super(res, partition_id, colors_id, classification_id, advice_header_id, advice_body_id);
+        }
     }
 }

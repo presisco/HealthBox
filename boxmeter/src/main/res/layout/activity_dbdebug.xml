@@ -201,6 +201,7 @@
 
         <Button
             android:id="@+id/buttonGenerate"
+            style="@style/Button.Borderless.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onGenerate"
@@ -208,6 +209,7 @@
 
         <Button
             android:id="@+id/buttonErase"
+            style="@style/Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onEraseMode"

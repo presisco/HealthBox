@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="advice_sport" formatted="false">您的运动时间为%duration%分钟，\n
-        平均心率是%average%，\n
-        建议：\n
+        平均心率是%average%
     </string>
 
     <string name="advice_default" formatted="false">您的测试时间为%duration%分钟，\n
-        平均心率是%average%，\n
-        建议：\n
+        平均心率是%average%
     </string>
 
     <string-array name="default_partition">

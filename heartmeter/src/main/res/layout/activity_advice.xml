@@ -2,16 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
     tools:context="com.example.heartmeter.UI.Activity.AdviceActivity">
 
     <TextView
         android:id="@+id/textAdvice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="TextView" />
+        android:text="建议：\n" />
 
     <ProgressBar
         android:id="@+id/progressBar"

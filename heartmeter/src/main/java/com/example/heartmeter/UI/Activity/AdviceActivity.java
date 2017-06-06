@@ -70,6 +70,6 @@ public class AdviceActivity extends AppCompatActivity implements Response.Listen
     public void onResponse(String response) {
         mProgressBar.setVisibility(View.INVISIBLE);
         mAdviceText.setVisibility(View.VISIBLE);
-        mAdviceText.setText(response);
+        mAdviceText.setText(mAdviceText.getText() + response);
     }
 }

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#1e88e5</color>
+    <color name="colorPrimaryDark">#1565c0</color>
+    <color name="colorAccent">#009688</color>
     <color name="colorTabBackground">#F5F5F5</color>
     <color name="colorIconDefault">#424242</color>
     <color name="colorIconSelected">#1565C0</color>
     <color name="colorRealtime">#F44336</color>
     <color name="colorHistory">#03A9F4</color>
     <color name="colorPersonal">#00E676</color>
+    <color name="colorBackground">#141628</color>
+    <color name="primary_text_default_material_light">#E0E0E0</color>
+    <color name="colorForeground">#ffcdd2</color>
+    <color name="primary_text_dark">#0c0f1d</color>
+    <color name="colorButtonNormal">#424242</color>
 </resources>

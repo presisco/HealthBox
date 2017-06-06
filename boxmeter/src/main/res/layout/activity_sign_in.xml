@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="200dp"
     android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     android:orientation="vertical"
     tools:context="com.presisco.boxmeter.UI.Activity.SignInActivity">
 
@@ -48,7 +50,7 @@
 
     <Button
         android:id="@+id/buttonStartLogin"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Button.Borderless.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onLogin"

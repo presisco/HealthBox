@@ -20,6 +20,8 @@
     <string name="label_delete">删除</string>
     <string name="label_comment">评价你的感受</string>
     <string name="label_get_advice">获取建议</string>
+    <string name="label_drawer_open">打开</string>
+    <string name="label_drawer_close">关闭</string>
 
     <string-array name="title_warning_bt">
         <item>警告：</item>

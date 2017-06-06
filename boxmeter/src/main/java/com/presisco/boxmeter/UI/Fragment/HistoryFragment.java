@@ -27,10 +27,6 @@ import lecho.lib.hellocharts.util.ChartUtils;
  * create an instance of this fragment.
  */
 public class HistoryFragment extends BaseHistoryFragment implements BaseHistoryFragment.ActionListener {
-    private static final int MODE_DEFAULT = 0;
-    private static final int MODE_AEROBIC = 1;
-    private static final int MODE_ANAEROBIC = 2;
-    private static final int MODE_SLEEP = 3;
     private static final String[] EVENT_TYPES = {Event.TYPE_DEFAULT, Event.TYPE_AEROBIC, Event.TYPE_ANAEROBIC, Event.TYPE_SLEEP};
     private SQLiteManager mDataManager;
 

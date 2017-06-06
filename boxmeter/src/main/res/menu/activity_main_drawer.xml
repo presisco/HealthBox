@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_real_time"
+            android:icon="@drawable/ic_realtime_selected"
+            android:title="@string/title_real_time" />
+
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_history_selected"
+            android:title="@string/title_history" />
+        <item
+            android:id="@+id/nav_analyze"
+            android:icon="@drawable/ic_analyze_selected"
+            android:title="@string/label_analyze_mode" />
+        <item
+            android:id="@+id/nav_personal"
+            android:icon="@drawable/ic_personal_selected"
+            android:title="@string/title_personal" />
+    </group>
+
+</menu>

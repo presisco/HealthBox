@@ -15,7 +15,9 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.Activity.MainActivity" />
+        <activity
+            android:name=".UI.Activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".debug.BTBoxActivity" />
         <activity android:name=".UI.Activity.WelcomeActivity">
             <intent-filter>

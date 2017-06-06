@@ -35,7 +35,7 @@
 
         <Button
             android:id="@+id/buttonStart"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Button.Borderless.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

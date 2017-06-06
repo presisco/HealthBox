@@ -1,5 +1,6 @@
 package com.presisco.boxmeter.UI.Fragment;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import com.presisco.boxmeter.Data.Event;
 import com.presisco.boxmeter.Data.EventData;
 import com.presisco.boxmeter.R;
+import com.presisco.boxmeter.UI.Activity.AdviceActivity;
 import com.presisco.boxmeter.storage.SQLiteManager;
 import com.presisco.shared.data.BaseEvent;
 import com.presisco.shared.data.BaseEventData;
@@ -54,7 +56,7 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
                 R.layout.fragment_analyze,
                 R.id.spinnerMode,
                 R.id.spinnerEvent,
-                R.id.monitorHost,
+                R.id.analyzeHost,
                 R.id.buttonAdvice,
                 inflater, container, savedInstanceState);
     }
@@ -378,8 +380,11 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
     }
 
     @Override
-    public void onGetAdvice(String event_type, String classification) {
-
+    public void onGetAdvice(String event_type, int classification_index) {
+        Intent intent = new Intent(getActivity(), AdviceActivity.class);
+        intent.putExtra("classification", classification_index);
+        intent.putExtra("event_type", event_type);
+        startActivity(intent);
     }
 
     public abstract static class AnalyzeMode extends Analyze<EventData> {

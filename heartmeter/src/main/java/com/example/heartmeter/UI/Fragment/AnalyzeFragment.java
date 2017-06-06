@@ -27,10 +27,6 @@ import java.util.ArrayList;
 
 import lecho.lib.hellocharts.model.SliceValue;
 
-/**
- * Created by presisco on 2017/6/3.
- */
-
 public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeFragment.ActionListener {
     private SQLiteManager mDataManager;
     private int user_age;
@@ -185,7 +181,7 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
                         average_stat = average;
                         duration = data.length / 60;
 
-                        setClassificationIndex(Classifier.classify(average, PARTITION));
+                        setClassificationIndex(Classifier.classify((double) average / (220 - user_age), PARTITION));
 
                         ArrayList<SliceValue> temp = new ArrayList<>();
                         for (int i = 0; i < dist_value.length; ++i) {
@@ -259,7 +255,7 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
                         average_stat = average;
                         duration = data.length / 60;
 
-                        setClassificationIndex(Classifier.classify(average, PARTITION));
+                        setClassificationIndex(Classifier.classify((double) average / (220 - user_age), PARTITION));
 
                         ArrayList<SliceValue> temp = new ArrayList<>();
                         for (int i = 0; i < dist_value.length; ++i) {
@@ -371,10 +367,11 @@ public class AnalyzeFragment extends BaseAnalyzeFragment implements BaseAnalyzeF
     }
 
     @Override
-    public void onGetAdvice(String event_type, String classification) {
+    public void onGetAdvice(String event_type, int classification_index) {
         Intent intent = new Intent(getActivity(), AdviceActivity.class);
-        intent.putExtra("classification", classification);
+        intent.putExtra("classification", classification_index);
         intent.putExtra("event_type",event_type);
+        startActivity(intent);
     }
 
     public abstract static class AnalyzeMode extends Analyze<EventData> {

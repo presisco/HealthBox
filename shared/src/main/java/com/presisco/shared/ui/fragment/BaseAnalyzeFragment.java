@@ -20,6 +20,7 @@ import com.presisco.shared.data.BaseEventData;
 import com.presisco.shared.ui.framework.mode.Analyze;
 import com.presisco.shared.ui.framework.monitor.MonitorHostFragment;
 import com.presisco.shared.ui.framework.monitor.MonitorPanelFragment;
+import com.presisco.shared.utils.LCAT;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -117,18 +118,19 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
             }
         });
         mEventSpinner.setAdapter(mEventAdapter);
-
-        mAnalyseProgress = new ProgressDialog(getContext());
-        mAnalyseProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mAnalyseProgress.setIndeterminate(true);
-        mAnalyseProgress.setTitle("正在进行分析");
+        if (mAnalyseProgress == null) {
+            mAnalyseProgress = new ProgressDialog(getContext());
+            mAnalyseProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mAnalyseProgress.setIndeterminate(true);
+            mAnalyseProgress.setTitle("正在进行分析");
+        }
 
         mGetAdviceBtn = (Button) rootView.findViewById(get_advice_btn_id);
         mGetAdviceBtn.setEnabled(false);
         mGetAdviceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mChildListener.onGetAdvice(mCurrentMode.getEventType(), mCurrentMode.getClassificationString());
+                mChildListener.onGetAdvice(mCurrentMode.getEventType(), mCurrentMode.getClassificationIndex());
             }
         });
 
@@ -146,7 +148,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
     @Override
     public void onStop() {
         super.onStop();
-        mAnalyseProgress.hide();
+        mAnalyseProgress.dismiss();
     }
 
     /**
@@ -157,7 +159,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
 
         BaseEventData[] loadEventData(long event_id);
 
-        void onGetAdvice(String event_type, String classification);
+        void onGetAdvice(String event_type, int classification_index);
     }
 
     private class EventAdapter extends ArrayAdapter<String> {
@@ -169,13 +171,15 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
     private class AnalyseTask extends AsyncTask<Long, Void, Void> {
         @Override
         protected void onPostExecute(Void aVoid) {
-            mAnalyseProgress.hide();
+            LCAT.d(this, "end analyze");
+            mAnalyseProgress.dismiss();
             mCurrentMode.displayResult();
             mGetAdviceBtn.setEnabled(true);
         }
 
         @Override
         protected void onPreExecute() {
+            LCAT.d(this, "start analyze");
             mGetAdviceBtn.setEnabled(false);
             mAnalyseProgress.show();
             mMonitorHost.displayPanel(mCurrentMode.getPanelType());

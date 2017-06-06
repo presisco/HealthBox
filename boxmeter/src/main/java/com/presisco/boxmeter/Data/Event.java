@@ -20,7 +20,7 @@ public class Event extends BaseEvent {
     public static final int ANALYSE_RATE_DEFAULT = 1;
     public static final int ANALYSE_RATE_AEROBIC = 1;
     public static final int ANALYSE_RATE_ANAEROBIC = 1;
-    public static final int ANALYSE_RATE_SLEEP = 60;
+    public static final int ANALYSE_RATE_SLEEP = 1;
 
     public Event() {
 

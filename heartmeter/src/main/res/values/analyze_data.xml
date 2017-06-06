@@ -69,10 +69,10 @@
     </string-array>
 
     <string-array name="anaerobic_partition">
-        <item>0.35</item>
-        <item>0.59</item>
-        <item>0.79</item>
-        <item>0.89</item>
+        <item>0.38</item>
+        <item>0.62</item>
+        <item>0.82</item>
+        <item>0.92</item>
     </string-array>
 
     <string-array name="anaerobic_classification">

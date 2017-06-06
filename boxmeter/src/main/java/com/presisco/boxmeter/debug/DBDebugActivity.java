@@ -145,7 +145,7 @@ public class DBDebugActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mGenerateProgress.hide();
+            mGenerateProgress.dismiss();
             Toast.makeText(DBDebugActivity.this, "选定数据已生成完毕", Toast.LENGTH_SHORT).show();
         }
 
@@ -203,7 +203,7 @@ public class DBDebugActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             Toast.makeText(DBDebugActivity.this, "选定模式数据已清除", Toast.LENGTH_SHORT).show();
-            mEraseProgress.hide();
+            mEraseProgress.dismiss();
         }
 
         @Override

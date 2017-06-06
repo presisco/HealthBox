@@ -2,14 +2,12 @@
 <resources>
     <string name="advice_sport" formatted="false">
         您的运动时间为%duration%分钟，\n
-        平均血氧饱和度是%average%，\n
-        建议：\n
+        平均血氧饱和度是%average%\n
     </string>
 
     <string name="advice_default" formatted="false">
         您的测试时间为%duration%分钟，\n
-        平均血氧饱和度是%average%，\n
-        建议：\n
+        平均血氧饱和度是%average%\n
     </string>
 
     <string-array name="default_partition">
@@ -36,55 +34,68 @@
     </string-array>
 
     <string-array name="aerobic_partition">
-        <item>82</item>
-        <item>88</item>
-        <item>94</item>
+        <item>85</item>
+        <item>89</item>
+        <item>93</item>
+        <item>97</item>
     </string-array>
 
     <string-array name="aerobic_classification">
         <item>超大强度</item>
         <item>大强度</item>
         <item>中等强度</item>
+        <item>低强度</item>
+        <item>较低强度</item>
     </string-array>
 
     <string-array name="aerobic_colors">
         <item>#D84315</item>
         <item>#F9A825</item>
         <item>#2E7D32</item>
+        <item>#00B0FF</item>
+        <item>#1565C0</item>
     </string-array>
 
     <string-array name="aerobic_advice_bodies">
         <item></item>
         <item></item>
         <item></item>
+        <item></item>
+        <item></item>
     </string-array>
 
     <string-array name="anaerobic_partition">
-        <item>79</item>
-        <item>85</item>
-        <item>91</item>
+        <item>83</item>
+        <item>86</item>
+        <item>90</item>
+        <item>94</item>
     </string-array>
 
     <string-array name="anaerobic_classification">
         <item>超大强度</item>
         <item>大强度</item>
         <item>中等强度</item>
+        <item>低强度</item>
+        <item>较低强度</item>
     </string-array>
 
     <string-array name="anaerobic_colors">
         <item>#D84315</item>
         <item>#F9A825</item>
         <item>#2E7D32</item>
+        <item>#00B0FF</item>
+        <item>#1565C0</item>
     </string-array>
 
     <string-array name="anaerobic_advice_bodies">
         <item></item>
         <item></item>
         <item></item>
+        <item></item>
+        <item></item>
     </string-array>
 
-    <string-array name="sleep_partition">
-        <item>85</item>
+    <string-array name="sleep_partition">\
         <item>90</item>
         <item>95</item>
     </string-array>

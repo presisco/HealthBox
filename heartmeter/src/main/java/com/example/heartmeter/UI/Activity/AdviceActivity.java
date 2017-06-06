@@ -28,9 +28,10 @@ public class AdviceActivity extends AppCompatActivity implements Response.Listen
         setContentView(R.layout.activity_advice);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mAdviceText = (TextView) findViewById(R.id.textAdvice);
+        int class_index = getIntent().getIntExtra("classification", 0) + 1;
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("classification", getIntent().getStringExtra("classification"));
+        params.put("classification", Integer.toString(class_index));
         params.put("event_type", getIntent().getStringExtra("event_type"));
         String username = PreferenceManager.getDefaultSharedPreferences(this).getString("username", "");
         if (username == "") {
@@ -43,7 +44,7 @@ public class AdviceActivity extends AppCompatActivity implements Response.Listen
             params.put("username", username);
             params.put("body_sign", "heart_rate");
             RequestQueue queue = Volley.newRequestQueue(this);
-            queue.add(new PostFormRequest(Constant.PATH_GET_ADVICE, params, this, this));
+            queue.add(new PostFormRequest(Constant.HOST_ADDRESS + Constant.PATH_GET_ADVICE, params, this, this));
         }
     }
 
@@ -56,6 +57,7 @@ public class AdviceActivity extends AppCompatActivity implements Response.Listen
     @Override
     public void onErrorResponse(VolleyError error) {
         mProgressBar.setVisibility(View.INVISIBLE);
+        mAdviceText.setVisibility(View.VISIBLE);
         mAdviceText.setText(error.toString());
     }
 
@@ -67,6 +69,7 @@ public class AdviceActivity extends AppCompatActivity implements Response.Listen
     @Override
     public void onResponse(String response) {
         mProgressBar.setVisibility(View.INVISIBLE);
+        mAdviceText.setVisibility(View.VISIBLE);
         mAdviceText.setText(response);
     }
 }

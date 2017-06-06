@@ -37,7 +37,7 @@ public abstract class Analyze<EVENT_DATA> {
         ADVICE_BODY = res.getStringArray(advice_body_id);
     }
 
-    protected int getClassificationIndex() {
+    public int getClassificationIndex() {
         return classification_index;
     }
 

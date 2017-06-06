@@ -87,7 +87,7 @@ public class HistoryFragment extends BaseHistoryFragment implements BaseHistoryF
         LinePanelFragment.LineStyle main_line_style = new LinePanelFragment.LineStyle();
         main_line_style.line_color = ChartUtils.COLOR_BLUE;
         panel.setStyle(main_line_style);
-        panel.setAxisYScale(0, 110);
+        panel.setAxisYScale(70, 110);
         panel.setMaxPoints(60);
         panel.setXStep(1);
         panel.setAxisXText("Time");

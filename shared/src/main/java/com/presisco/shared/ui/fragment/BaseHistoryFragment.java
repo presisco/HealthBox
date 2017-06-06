@@ -111,6 +111,7 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
             public void onClick(View v) {
                 mChildListener.deleteEvent(mCurrentEvent.id);
                 mEventAdapter.remove(mCurrentEvent.start_time);
+                mEventAdapter.notifyDataSetChanged();
             }
         });
 
@@ -144,7 +145,7 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
     @Override
     public void onStop() {
         super.onStop();
-        mAnalyseProgress.hide();
+        mAnalyseProgress.dismiss();
     }
 
     /**
@@ -171,7 +172,7 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
     private class HistoryTask extends AsyncTask<Long, Void, BaseEventData[]> {
         @Override
         protected void onPostExecute(BaseEventData[] event_data) {
-            mAnalyseProgress.hide();
+            mAnalyseProgress.dismiss();
             mChildListener.displayEventData(mCurrentPanel, event_data, mCurrentEvent.analyse_rate);
         }
 

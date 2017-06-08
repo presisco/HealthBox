@@ -19,6 +19,7 @@ import com.presisco.shared.data.BaseEvent;
 import com.presisco.shared.data.BaseEventData;
 import com.presisco.shared.ui.framework.monitor.MonitorHostFragment;
 import com.presisco.shared.ui.framework.monitor.MonitorPanelFragment;
+import com.presisco.shared.utils.LCAT;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -37,8 +38,11 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
     private BaseEvent[] mEvents = null;
     private BaseEvent mCurrentEvent = null;
     private ArrayList<String> mEventTitles = new ArrayList<>();
-    private ProgressDialog mAnalyseProgress;
-    private Executor mAnalyseExecutor = Executors.newSingleThreadExecutor();
+    private ProgressDialog mHistoryProgress;
+    private Executor mHistoryExecutor = Executors.newSingleThreadExecutor();
+    private int mCurrentModeId = 0;
+    private boolean is_first_load = false;
+
     public BaseHistoryFragment() {
         // Required empty public constructor
     }
@@ -53,6 +57,13 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
             mEventAdapter.add(event.start_time);
         }
         mEventAdapter.notifyDataSetChanged();
+        int showed_item = mEventSpinner.getSelectedItemPosition();
+        if (showed_item > -1 && showed_item < mEvents.length) {
+            mCurrentEvent = mEvents[showed_item];
+        } else {
+            mCurrentEvent = mEvents[0];
+        }
+        new HistoryTask().executeOnExecutor(mHistoryExecutor, mCurrentEvent.id);
     }
 
     protected View onCreateView(
@@ -66,6 +77,8 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
             ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        LCAT.d(this, "create view");
+        is_first_load = true;
         View rootView = inflater.inflate(layout_id, container, false);
         if (mMonitorHost == null) {
             mMonitorHost = MonitorHostFragment.newInstance();
@@ -80,7 +93,9 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
+                LCAT.d(this, "mode spinner item selected: " + pos);
                 mEvents = mChildListener.loadEvents(pos);
+                mCurrentModeId = pos;
                 refreshEventTitles();
             }
 
@@ -95,8 +110,15 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
         mEventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                LCAT.d(this, "event spinner item selected: " + position);
+                if (is_first_load) {
+                    LCAT.d(this, "first load, task skipped");
+                    is_first_load = false;
+                    return;
+                }
+                LCAT.d(this, "loading data for: " + mCurrentEvent.start_time);
                 mCurrentEvent = mEvents[position];
-                new HistoryTask().executeOnExecutor(mAnalyseExecutor, mCurrentEvent.id);
+                new HistoryTask().executeOnExecutor(mHistoryExecutor, mCurrentEvent.id);
             }
 
             @Override
@@ -110,15 +132,15 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
             @Override
             public void onClick(View v) {
                 mChildListener.deleteEvent(mCurrentEvent.id);
-                mEventAdapter.remove(mCurrentEvent.start_time);
-                mEventAdapter.notifyDataSetChanged();
+                mEvents = mChildListener.loadEvents(mCurrentModeId);
+                refreshEventTitles();
             }
         });
 
-        mAnalyseProgress = new ProgressDialog(getContext());
-        mAnalyseProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mAnalyseProgress.setIndeterminate(true);
-        mAnalyseProgress.setTitle("正在进行分析");
+        mHistoryProgress = new ProgressDialog(getContext());
+        mHistoryProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mHistoryProgress.setIndeterminate(true);
+        mHistoryProgress.setTitle("正在进行分析");
 
         rootView.findViewById(comment_btn_id).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +167,7 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
     @Override
     public void onStop() {
         super.onStop();
-        mAnalyseProgress.dismiss();
+        mHistoryProgress.dismiss();
     }
 
     /**
@@ -172,17 +194,21 @@ public abstract class BaseHistoryFragment extends Fragment implements MonitorPan
     private class HistoryTask extends AsyncTask<Long, Void, BaseEventData[]> {
         @Override
         protected void onPostExecute(BaseEventData[] event_data) {
-            mAnalyseProgress.dismiss();
+            LCAT.d(this, "task finished");
+            mHistoryProgress.dismiss();
             mChildListener.displayEventData(mCurrentPanel, event_data, mCurrentEvent.analyse_rate);
         }
 
         @Override
         protected void onPreExecute() {
-            mAnalyseProgress.show();
+            LCAT.d(this, "task prepared");
+            mCurrentPanel.clear();
+            mHistoryProgress.show();
         }
 
         @Override
         protected BaseEventData[] doInBackground(Long... params) {
+            LCAT.d(this, "task started");
             return mChildListener.loadEventData(params[0]);
         }
     }

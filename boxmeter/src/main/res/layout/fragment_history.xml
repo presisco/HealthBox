@@ -61,7 +61,7 @@
 
     <Button
         android:id="@+id/buttonComment"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -44,6 +44,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
     private ArrayList<String> mEventTitles = new ArrayList<>();
     private ProgressDialog mAnalyseProgress;
     private Executor mAnalyseExecutor = Executors.newSingleThreadExecutor();
+    private boolean is_first_load = false;
 
     public BaseAnalyzeFragment() {
         // Required empty public constructor
@@ -63,6 +64,13 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
             mEventAdapter.add(event.start_time);
         }
         mEventAdapter.notifyDataSetChanged();
+        int showed_item = mEventSpinner.getSelectedItemPosition();
+        if (showed_item > -1 && showed_item < mEvents.length) {
+            mCurrentEvent = mEvents[showed_item];
+        } else {
+            mCurrentEvent = mEvents[0];
+        }
+        new AnalyseTask().executeOnExecutor(mAnalyseExecutor, mCurrentEvent.id);
     }
 
     protected View onCreateView(
@@ -74,6 +82,8 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        LCAT.d(this, "create view");
+        is_first_load = true;
         View rootView = inflater.inflate(layout_id, container, false);
         if (mMonitorHost == null) {
             mMonitorHost = MonitorHostFragment.newInstance();
@@ -108,6 +118,10 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
         mEventSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (is_first_load) {
+                    is_first_load = false;
+                    return;
+                }
                 mCurrentEvent = mEvents[position];
                 new AnalyseTask().executeOnExecutor(mAnalyseExecutor, mCurrentEvent.id);
             }
@@ -172,6 +186,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
         @Override
         protected void onPostExecute(Void aVoid) {
             LCAT.d(this, "end analyze");
+            mCurrentPanel.clear();
             mAnalyseProgress.dismiss();
             mCurrentMode.displayResult();
             mGetAdviceBtn.setEnabled(true);
@@ -179,7 +194,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
 
         @Override
         protected void onPreExecute() {
-            LCAT.d(this, "start analyze");
+            LCAT.d(this, "prepared analyze");
             mGetAdviceBtn.setEnabled(false);
             mAnalyseProgress.show();
             mMonitorHost.displayPanel(mCurrentMode.getPanelType());
@@ -187,6 +202,7 @@ public class BaseAnalyzeFragment extends Fragment implements MonitorPanelFragmen
 
         @Override
         protected Void doInBackground(Long... params) {
+            LCAT.d(this, "start analyze");
             BaseEventData[] event_data = mChildListener.loadEventData(params[0]);
             mCurrentMode.analyseData(event_data, mCurrentEvent.analyse_rate);
             return null;

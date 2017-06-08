@@ -81,7 +81,7 @@ public class MonitorService extends BaseMonitorService implements SharedPreferen
                     vibrate(-1, 750, 500, 750, 500);
                 }
                 if (use_ringtone) {
-                    scream(uri_ringtone);
+                    scream(uri_ringtone, 3000);
                 }
                 call(emergency_number);
                 emergency_counter = 0;

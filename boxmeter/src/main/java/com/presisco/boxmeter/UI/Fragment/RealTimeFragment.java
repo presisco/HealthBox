@@ -2,6 +2,7 @@ package com.presisco.boxmeter.UI.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,8 +19,6 @@ import com.presisco.shared.ui.framework.monitor.LinePanelFragment;
 import com.presisco.shared.ui.framework.monitor.MonitorHostFragment;
 import com.presisco.shared.ui.framework.monitor.StringPanelFragment;
 import com.presisco.shared.utils.ByteUtils;
-
-import lecho.lib.hellocharts.util.ChartUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -135,7 +134,7 @@ public class RealTimeFragment extends BaseRealTimeFragment implements BaseRealTi
                         linePanel.setAxisXText("Time");
                         linePanel.setAxisYText("SPO2H");
                         LinePanelFragment.LineStyle style = new LinePanelFragment.LineStyle();
-                        style.line_color = ChartUtils.COLOR_BLUE;
+                        style.line_color = Color.parseColor("#26A69A");
                         style.has_points = false;
                         linePanel.setStyle(style);
                         linePanel.redraw();
@@ -169,7 +168,7 @@ public class RealTimeFragment extends BaseRealTimeFragment implements BaseRealTi
                         linePanel.setAxisXText("Time");
                         linePanel.setAxisYText("Pulse");
                         LinePanelFragment.LineStyle style = new LinePanelFragment.LineStyle();
-                        style.line_color = ChartUtils.COLOR_BLUE;
+                        style.line_color = Color.parseColor("#26A69A");
                         style.has_points = false;
                         linePanel.setStyle(style);
                         linePanel.redraw();

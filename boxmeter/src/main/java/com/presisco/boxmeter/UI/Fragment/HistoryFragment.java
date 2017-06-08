@@ -1,6 +1,7 @@
 package com.presisco.boxmeter.UI.Fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,8 +19,6 @@ import com.presisco.shared.data.BaseEventData;
 import com.presisco.shared.ui.fragment.BaseHistoryFragment;
 import com.presisco.shared.ui.framework.monitor.LinePanelFragment;
 import com.presisco.shared.ui.framework.monitor.MonitorPanelFragment;
-
-import lecho.lib.hellocharts.util.ChartUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -81,7 +80,7 @@ public class HistoryFragment extends BaseHistoryFragment implements BaseHistoryF
         EventData[] data_set = (EventData[]) event_data_set;
         panel.clear();
         LinePanelFragment.LineStyle main_line_style = new LinePanelFragment.LineStyle();
-        main_line_style.line_color = ChartUtils.COLOR_BLUE;
+        main_line_style.line_color = Color.parseColor("#26A69A");
         panel.setStyle(main_line_style);
         panel.setAxisYScale(70, 110);
         panel.setMaxPoints(60);
